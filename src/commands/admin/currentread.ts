@@ -1,5 +1,6 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, MessageFlags } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder } from 'discord.js';
+// Make sure the path is correct and the file exists; adjust if necessary:
+import { supabase } from '../../utils/supabase';
 
 export const currentReadCommand = new SlashCommandBuilder()
   .setName('currentread')

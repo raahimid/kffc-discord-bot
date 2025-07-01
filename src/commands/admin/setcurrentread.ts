@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, StringSelectMenuInteraction, ComponentType } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 export const setCurrentReadCommand = new SlashCommandBuilder()
   .setName('setcurrentread')

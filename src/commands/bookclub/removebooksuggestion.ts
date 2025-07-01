@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 export const removeBookSuggestionCommand = new SlashCommandBuilder()
   .setName('removebooksuggestion')

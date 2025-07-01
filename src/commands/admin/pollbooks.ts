@@ -1,6 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, Interaction, InteractionCollector } from 'discord.js';
-import { supabase } from '../utils/supabase';
-import { executeSetCurrentRead } from './setcurrentread';
+import { supabase } from '../../utils/supabase';
 
 export const pollBooksCommand = new SlashCommandBuilder()
   .setName('pollbooks')

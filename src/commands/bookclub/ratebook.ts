@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 export const rateBookCommand = new SlashCommandBuilder()
   .setName('ratebook')

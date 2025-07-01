@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, InteractionCollector } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 export const listBookSuggestionsCommand = new SlashCommandBuilder()
   .setName('listbooksuggestions')

@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType, User } from 'discord.js';
-import { supabase } from '../utils/supabase';
+import { supabase } from '../../utils/supabase';
 
 export const readHistoryCommand = new SlashCommandBuilder()
   .setName('readhistory')

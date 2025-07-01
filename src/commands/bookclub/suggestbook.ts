@@ -1,8 +1,8 @@
 // src/commands/suggestbook.ts
 import type { CommandInteraction, CacheType, ChatInputCommandInteraction } from 'discord.js';
 import { SlashCommandBuilder } from 'discord.js';
-import { fetchBookFromGoogleBooks, GoogleBook } from '../utils/googleBooks';
-import { supabase } from '../utils/supabase';
+import { fetchBookFromGoogleBooks, GoogleBook } from '../../utils/googleBooks';
+import { supabase } from '../../utils/supabase';
 
 async function saveBookSuggestion(
   discordUserId: string,

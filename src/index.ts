@@ -1,19 +1,32 @@
 import 'dotenv/config';
 import { Client, GatewayIntentBits, Interaction, Routes } from 'discord.js';
 import { REST } from 'discord.js';
-import { suggestBookCommand, executeSuggestBook } from './commands/suggestbook';
-import { listBookSuggestionsCommand, executeListBookSuggestions } from './commands/listsuggestions';
-import { removeBookSuggestionCommand, executeRemoveBookSuggestion } from './commands/removebooksuggestion';
-import { currentReadCommand, executeCurrentRead } from './commands/currentread';
-import { setCurrentReadCommand, executeSetCurrentRead } from './commands/setcurrentread';
-import { pollBooksCommand, executePollBooks } from './commands/pollbooks';
-import { endBookPollCommand, executeEndBookPoll } from './commands/endbookpoll';
-import { rateBookCommand, executeRateBook } from './commands/ratebook';
-import { readHistoryCommand, executeReadHistory } from './commands/readhistory';
-import { topBooksCommand, executeTopBooks } from './commands/topbooks';
+import { suggestBookCommand, executeSuggestBook } from './commands/bookclub/suggestbook';
+import { listBookSuggestionsCommand, executeListBookSuggestions } from './commands/bookclub/listsuggestions';
+import { removeBookSuggestionCommand, executeRemoveBookSuggestion } from './commands/bookclub/removebooksuggestion';
+import { currentReadCommand, executeCurrentRead } from './commands/admin/currentread';
+import { setCurrentReadCommand, executeSetCurrentRead } from './commands/admin/setcurrentread';
+import { pollBooksCommand, executePollBooks } from './commands/admin/pollbooks';
+import { endBookPollCommand, executeEndBookPoll } from './commands/admin/endbookpoll';
+import { rateBookCommand, executeRateBook } from './commands/bookclub/ratebook';
+import { readHistoryCommand, executeReadHistory } from './commands/bookclub/readhistory';
+import { topBooksCommand, executeTopBooks } from './commands/bookclub/topbooks';
+import { syncAudiophileRotation } from './commands/musicclub/syncAudiophileRotation';
+import { suggestAlbumCommand, executeSuggestAlbum } from './commands/musicclub/suggestalbum';
+import { currentAlbumCommand, executeCurrentAlbum } from './commands/musicclub/currentalbum';
+import { albumHistoryCommand, executeAlbumHistory } from './commands/musicclub/albumhistory';
+import { finishAlbumCommand, executeFinishAlbum } from './commands/admin/finishalbum';
+import { rateAlbumCommand, executeRateAlbum } from './commands/musicclub/ratealbum';
+import { topAlbumsCommand, executeTopAlbums } from './commands/musicclub/topalbums';
+import { skipTurnCommand, executeSkipTurn } from './commands/admin/skipturn';
+import { nextPickerCommand, executeNextPicker } from './commands/admin/nextpicker';
+import { bookInfoCommand, executeBookInfo } from './commands/bookclub/bookinfo';
+import { serverPlaylistCommand, executeServerPlaylist } from './commands/musicclub/serverplaylist';
+import { addToPlaylistCommand, executeAddToPlaylist } from './commands/musicclub/addtoplaylist';
+import { endCurrentReadCommand, executeEndCurrentRead } from './commands/admin/endcurrentread';
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 });
 
 // Register commands with Discord API (do this on bot startup or separately)
@@ -28,7 +41,19 @@ async function registerCommands() {
     endBookPollCommand.toJSON(),
     rateBookCommand.toJSON(), // Register /ratebook
     readHistoryCommand.toJSON(), // Register /readhistory
-    topBooksCommand.toJSON() // Register /topbooks
+    topBooksCommand.toJSON(), // Register /topbooks
+    suggestAlbumCommand.toJSON(), // Register /suggestalbum
+    currentAlbumCommand.toJSON(), // Register /currentalbum
+    albumHistoryCommand.toJSON(), // Register /albumhistory
+    finishAlbumCommand.toJSON(), // Register /finishalbum
+    rateAlbumCommand.toJSON(), // Register /ratealbum
+    topAlbumsCommand.toJSON(), // Register /topalbums
+    skipTurnCommand.toJSON(), // Register /skipturn
+    nextPickerCommand.toJSON(), // Register /nextpicker
+    bookInfoCommand.toJSON(), // Register /bookinfo
+    serverPlaylistCommand.toJSON(), // Register /serverplaylist
+    addToPlaylistCommand.toJSON(), // Register /addtoplaylist
+    endCurrentReadCommand.toJSON() // Register /endcurrentread
   ];
   if (!process.env.CLIENT_ID || !process.env.GUILD_ID || !process.env.DISCORD_TOKEN) {
     throw new Error('Missing env variables');
@@ -44,6 +69,7 @@ async function registerCommands() {
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user?.tag}`);
   await registerCommands();
+  await syncAudiophileRotation(client);
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
@@ -69,6 +95,30 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     await executeReadHistory(interaction);
   } else if (interaction.commandName === 'topbooks') {
     await executeTopBooks(interaction);
+  } else if (interaction.commandName === 'suggestalbum') {
+    await executeSuggestAlbum(interaction);
+  } else if (interaction.commandName === 'currentalbum') {
+    await executeCurrentAlbum(interaction);
+  } else if (interaction.commandName === 'albumhistory') {
+    await executeAlbumHistory(interaction);
+  } else if (interaction.commandName === 'finishalbum') {
+    await executeFinishAlbum(interaction);
+  } else if (interaction.commandName === 'ratealbum') {
+    await executeRateAlbum(interaction);
+  } else if (interaction.commandName === 'topalbums') {
+    await executeTopAlbums(interaction);
+  } else if (interaction.commandName === 'skipturn') {
+    await executeSkipTurn(interaction);
+  } else if (interaction.commandName === 'nextpicker') {
+    await executeNextPicker(interaction);
+  } else if (interaction.commandName === 'bookinfo') {
+    await executeBookInfo(interaction);
+  } else if (interaction.commandName === 'serverplaylist') {
+    await executeServerPlaylist(interaction);
+  } else if (interaction.commandName === 'addtoplaylist') {
+    await executeAddToPlaylist(interaction);
+  } else if (interaction.commandName === 'endcurrentread') {
+    await executeEndCurrentRead(interaction);
   }
 });
 
