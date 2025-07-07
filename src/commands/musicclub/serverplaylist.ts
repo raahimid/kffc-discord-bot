@@ -1,11 +1,15 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ComponentType } from 'discord.js';
 import { supabase } from '../../utils/supabase';
+import process from 'process';
 
 export const serverPlaylistCommand = new SlashCommandBuilder()
   .setName('serverplaylist')
   .setDescription('Display the ongoing server playlist for the music club.');
 
 const PAGE_SIZE = 10;
+
+const SPOTIFY_PLAYLIST_ID = process.env.SPOTIFY_PLAYLIST_ID;
+const APPLE_MUSIC_PLAYLIST_URL = process.env.APPLE_MUSIC_PLAYLIST_URL;
 
 export async function executeServerPlaylist(interaction: ChatInputCommandInteraction) {
   const { data: songs, error } = await supabase
@@ -22,15 +26,25 @@ export async function executeServerPlaylist(interaction: ChatInputCommandInterac
     const chunk = songs.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
     const embed = new EmbedBuilder()
       .setTitle('🎶 Server Playlist')
-      .setDescription('Songs added by the community:')
+      .setDescription(
+        `<:spotify:1389450918164172890> [Spotify Playlist](https://open.spotify.com/playlist/${SPOTIFY_PLAYLIST_ID})\n` +
+        `<:applemusic:1389450858034626560> [Apple Music Playlist](${APPLE_MUSIC_PLAYLIST_URL})\n\n` +
+        'Tracks added via `/addtoplaylist` are automatically synced to the Spotify playlist.\n' +
+        'The Apple Music playlist is updated manually by admins to mirror Spotify.' +
+        '\n\nSongs added by the community:'
+      )
       .setColor(0x1DB954);
-    chunk.forEach((row, idx) => {
-      const album = row.albums && Array.isArray(row.albums) ? row.albums[0] : row.albums;
-      embed.addFields({
-        name: `${row.song_name} by ${row.artist}`,
-        value: `Album: ${album ? `${album.title} by ${album.artist}` : 'Unknown'}\nAdded by: <@${row.added_by}>\nAdded: <t:${Math.floor(new Date(row.added_at).getTime() / 1000)}:f>`
+      // Helper to title case a string
+      function toTitleCase(str: string) {
+        return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase());
+      }
+      chunk.forEach((row, idx) => {
+        const album = row.albums && Array.isArray(row.albums) ? row.albums[0] : row.albums;
+        embed.addFields({
+          name: `Song: ${toTitleCase(row.song_name)}`,
+          value: `Album: ${album ? `${album.title} by ${album.artist}` : 'Unknown'}\nAdded by: <@${row.added_by}>\nAdded: <t:${Math.floor(new Date(row.added_at).getTime() / 1000)}:f>`
+        });
       });
-    });
     embed.setFooter({ text: `Page ${page + 1} of ${maxPage + 1}` });
     return embed;
   };

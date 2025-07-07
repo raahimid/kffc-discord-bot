@@ -35,3 +35,33 @@ export async function searchSpotifyAlbum(album: string, artist?: string) {
   if (!data.albums || !data.albums.items.length) return null;
   return data.albums.items[0];
 }
+
+export async function getSpotifyAlbumTracks(albumId: string): Promise<{ name: string }[]> {
+  const token = await getSpotifyToken();
+  const url = `https://api.spotify.com/v1/albums/${albumId}/tracks?limit=50`;
+  const resp = await fetch(url, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  const data = await resp.json();
+  if (!data.items) return [];
+  return data.items.map((track: any) => ({ name: track.name }));
+}
+
+export async function addTrackToSpotifyPlaylist(trackUri: string, playlistId: string, userAccessToken: string) {
+  const url = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${userAccessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ uris: [trackUri] })
+  });
+  if (!resp.ok) {
+    const err = await resp.text();
+    throw new Error(`Spotify playlist add failed: ${err}`);
+  }
+  return true;
+}
+
+export { getSpotifyToken };

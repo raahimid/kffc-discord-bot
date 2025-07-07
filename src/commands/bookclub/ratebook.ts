@@ -56,7 +56,7 @@ export async function executeRateBook(interaction: ChatInputCommandInteraction) 
     .single();
 
   if (!bookInHistory) {
-    await interaction.reply({ content: 'This book is not in the club\'s read history and cannot be rated.', ephemeral: true });
+    await interaction.reply({ content: 'You can only rate books the club has finished.', ephemeral: true });
     return;
   }
 

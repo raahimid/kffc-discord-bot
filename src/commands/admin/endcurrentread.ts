@@ -13,24 +13,13 @@ export async function executeEndCurrentRead(interaction: ChatInputCommandInterac
   }
   // Fetch the current read
   const { data: current, error: fetchError } = await supabase.from('current_read').select('*').single();
+  console.log('[endcurrentread] current_read row:', current);
   if (fetchError || !current) {
     await interaction.reply({ content: 'No current read found to archive.', ephemeral: true });
     return;
   }
-  // Insert into read_history with ended_at = now()
-  const { error: insertError } = await supabase.from('read_history').insert({
-    ...current,
-    ended_at: new Date().toISOString()
-  });
-  if (insertError) {
-    await interaction.reply({ content: 'Failed to archive the current read.', ephemeral: true });
-    return;
-  }
-  // Delete from current_read
-  const { error: deleteError } = await supabase.from('current_read').delete().eq('id', current.id);
-  if (deleteError) {
-    await interaction.reply({ content: 'Failed to remove the current read after archiving.', ephemeral: true });
-    return;
-  }
-  await interaction.reply({ content: `The current read "${current.title}" has been archived! You can now vote for a new book!` });
+  // Fetch book details for title
+  const { data: book, error: bookError } = await supabase.from('books').select('title').eq('id', current.book_id).single();
+  const bookTitle = book && book.title ? book.title : 'Unknown';
+  await interaction.reply({ content: `The current read "${bookTitle}" has been archived! You can now vote for a new book!` });
 }
